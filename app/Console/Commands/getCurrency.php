@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-
+use App\Http\Controllers\currencyController;
 class getCurrency extends Command
 {
     /**
@@ -27,6 +27,13 @@ class getCurrency extends Command
      */
     public function handle()
     {
+        $get_file = file_get_contents("https://api.nbp.pl/api/exchangerates/tables/A/?format=json");
+        $get_decode = json_decode($get_file, true);
+        $get_controller = new currencyController();
+        foreach($get_decode[0]['rates'] as $array)
+        {
+            $get_controller->updateCurrency(array($array));
+        }
         return Command::SUCCESS;
     }
 }
